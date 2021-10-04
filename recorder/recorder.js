@@ -1,5 +1,5 @@
 // Separate recorder module for Harbor home.
-// Collects data from AWS IoT device and feeds it to a separate table in DB.
+// Collects data from AWS IoT device and feeds it to a separate table in DB.    
 const config = require('./config/recorder-config.json');
 const DB = require('mariadb');
 const aws = require('aws-sdk');
@@ -70,7 +70,7 @@ function persistHeatingData(dbConnectionPool, dataPoint)
         // dataPoint.state.reported.heating["Sasha-TS"]
         // dataPoint.state.metadata.heating["Sasha-TS"].timestamp
         // dataPoint.timestamp
-        const EXPIRATION_TIME = 300;    // 5 * 60 seconds
+        const EXPIRATION_TIME = 480;    // 8 * 60 seconds
 
         // console.log(dataPoint.state.reported);
         // console.log(dataPoint.metadata.reported);
