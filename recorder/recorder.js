@@ -47,8 +47,41 @@ function getIoTShadowData()
         });
 }
 
+/**
+ * Returns named value from the payload passed if the value is not expired, otherwise
+ * returns null.
+ * 
+ * @param {Object} payload - AWS IoT device shadow payload.
+ * @param {String} valueName - name of the heating value data point.
+ * @param {Number} expirationAfter - expiration period in sec. 
+ * 
+ * @returns heating data value or null. 
+ */
+function actualHeatingDataOrNothing(payload, valueName, expirationAfter)
+{
+        return (payload.metadata.reported.heating[valueName].timestamp + expirationAfter > payload.timestamp)
+                ? payload.state.reported.heating[valueName] : null;
+
+}
+
 function persistHeatingData(dbConnectionPool, dataPoint)
 {
+        // dataPoint.state.reported.heating["Sasha-TS"]
+        // dataPoint.state.metadata.heating["Sasha-TS"].timestamp
+        // dataPoint.timestamp
+        const EXPIRATION_TIME = 300;    // 5 * 60 seconds
+
+        // console.log(dataPoint.state.reported);
+        // console.log(dataPoint.metadata.reported);
+        // console.log(dataPoint.timestamp);
+        
+        // console.log(actualHeatingDataOrNothing(dataPoint, "Sasha-TS", EXPIRATION_TIME));
+        // console.log(actualHeatingDataOrNothing(dataPoint, "Agata-TS", EXPIRATION_TIME));
+        // console.log(actualHeatingDataOrNothing(dataPoint, "Bedroom-TS", EXPIRATION_TIME));
+        // console.log(actualHeatingDataOrNothing(dataPoint, "Livingroom-TS", EXPIRATION_TIME));
+        // console.log(actualHeatingDataOrNothing(dataPoint, "Kitchen-TS", EXPIRATION_TIME));
+        // console.log(actualHeatingDataOrNothing(dataPoint, "BathroomFloor-TS", EXPIRATION_TIME));
+
         return new Promise((resolved, rejected) => {
                 dbConnectionPool.getConnection().then(dbConnection => {
                         dbConnectionPool.query(
@@ -57,12 +90,12 @@ function persistHeatingData(dbConnectionPool, dataPoint)
                                 VALUES(?, ?, ?, ?, ?, ?, ?);", 
                                 [
                                         new Date(),
-                                        dataPoint.state.reported.heating["Sasha-TS"],
-                                        dataPoint.state.reported.heating["Agata-TS"],
-                                        dataPoint.state.reported.heating["Bedroom-TS"],
-                                        dataPoint.state.reported.heating["Livingroom-TS"],
-                                        dataPoint.state.reported.heating["Kitchen-TS"],
-                                        dataPoint.state.reported.heating["BathroomFloor-TS"]
+                                        actualHeatingDataOrNothing(dataPoint, "Sasha-TS", EXPIRATION_TIME),
+                                        actualHeatingDataOrNothing(dataPoint, "Agata-TS", EXPIRATION_TIME),
+                                        actualHeatingDataOrNothing(dataPoint, "Bedroom-TS", EXPIRATION_TIME),
+                                        actualHeatingDataOrNothing(dataPoint, "Livingroom-TS", EXPIRATION_TIME),
+                                        actualHeatingDataOrNothing(dataPoint, "Kitchen-TS", EXPIRATION_TIME),
+                                        actualHeatingDataOrNothing(dataPoint, "BathroomFloor-TS", EXPIRATION_TIME)
                                 ]
                         ).then(() => {
                                 dbConnection.end();
