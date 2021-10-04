@@ -1,0 +1,42 @@
+ShHarbor Thing Recorder Service
+ReadMe WIP
+
+
+Installation
+
+Sensitive Information
+
+Config folder is not included to the git repository as it has private information.
+To deploy to the target environment:
+
+$ cd recorder
+$ scp -r config/ den@[xx.xx.xx.xx]:/home/den/ShHarborCloud/recorder
+
+ShHarbor Thing Recorder Installation
+
+Start from shharbor-recorder.service file in this directory. Check directories layout for everything 
+(node, working directory). Then copy shharbor-recorder.service to /lib/systemd/system/:
+$ sudo cp shharbor-recorder.service /lib/systemd/system/
+
+Run this command:
+$ sudo systemctl daemon-reload
+
+Let SystemD know about the shharbor-recorder service and instruct SystemD to load this service on boot:
+$ sudo systemctl enable shharbor-recorder
+
+Now run the shharbor-recorder service:
+$ sudo systemctl restart shharbor-recorder
+
+ShHarbor Thing Recorder Operations
+
+To see the status of the service:
+$ sudo systemctl status shharbor-recorder
+
+To restart:
+$ sudo systemctl restart shharbor-recorder
+
+To stop the service:
+$ sudo systemctl stop shharbor-recorder
+
+To disable the service (prevent it from loading on boot):
+$ sudo systemctl disable shharbor-recorder
