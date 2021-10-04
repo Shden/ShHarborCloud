@@ -1,4 +1,5 @@
-// Recorder fetches house data using ShWade API to persist live data to DB
+// Separate recorder module for Harbor home.
+// Collects data from AWS IoT device and feeds it to a separate table in DB.
 const config = require('./config/recorder-config.json');
 const DB = require('mariadb');
 const aws = require('aws-sdk');
